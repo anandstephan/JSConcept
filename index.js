@@ -177,4 +177,64 @@ const findNodeValue = () => {
   const path = getPathFromChildToParent(rootA, nodeA);
   console.log(getValueFromPath(rootB, path));
 };
-findNodeValue();
+// findNodeValue();
+
+// Polfill for setTimeout
+function createSetTimeout() {
+  let timeId = 1;
+  let timerMap = {};
+
+  function setTimeoutPoly(cb, delay) {
+    let id = timeId++;
+    timerMap[id] = true;
+    let start = Date.now();
+    function tiggerCallback() {
+      if (!timerMap[id]) return;
+      if (Date.now() > start + delay) {
+        requestIdleCallback(cb);
+      } else {
+        tiggerCallback();
+      }
+    }
+    tiggerCallback();
+    return id;
+  }
+
+  function clearTimeoutPoly(id) {
+    delete timerMap[id];
+  }
+  return { setTimeoutPoly, clearTimeoutPoly };
+}
+// const { setTimeoutPoly, clearTimeoutPoly } = createSetTimeout();
+// console.log("A");
+// let id = setTimeoutPoly(() => {
+//   console.log("B");
+// }, 1);
+// clearTimeoutPoly(id);
+
+// console.log("C");
+
+function createInterval() {
+  let intervalId = 1;
+  let intervalMap = {};
+  let { setTimeoutPoly, clearTimeoutPoly } = createSetTimeout();
+
+  function setIntervalPoly(cb, delay, ...args) {
+    let id = intervalId++;
+    function reiterate() {
+      intervalMap[id] = setTimeoutPoly(function () {
+        cb.apply(this, args);
+        if (intervalMap[id]) {
+          reiterate();
+        }
+      }, delay);
+    }
+    reiterate();
+    return id;
+  }
+  return { setIntervalPoly };
+}
+
+const { setIntervalPoly } = createInterval();
+// console.log(setIntervalPoly);
+setIntervalPoly(() => console.log("hi"), 1000);
