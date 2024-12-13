@@ -237,4 +237,11 @@ function createInterval() {
 
 const { setIntervalPoly } = createInterval();
 // console.log(setIntervalPoly);
-setIntervalPoly(() => console.log("hi"), 1000);
+// setIntervalPoly(() => console.log("hi"), 1000);
+
+Array.prototype.myReduce = function (cb, initialValue) {
+  // let sum =
+};
+[(1, 2, 3, 4)].myReduce((acc, curr) => {
+  // return acc + curr;
+}, 0);
